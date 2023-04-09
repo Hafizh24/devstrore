@@ -2,10 +2,10 @@ package repository
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/hafizh24/devstore/internal/app/model"
 	"github.com/jmoiron/sqlx"
+	log "github.com/sirupsen/logrus"
 )
 
 type CategoryRepository struct {
@@ -24,7 +24,7 @@ func (cr *CategoryRepository) Create(category model.Category) error {
 
 	_, err := cr.DB.Exec(sqlStatement, category.Name, category.Description)
 	if err != nil {
-		log.Print(fmt.Errorf("error CategoryRepository - Create : %w", err))
+		log.Error(fmt.Errorf("error CategoryRepository - Create : %w", err))
 		return err
 	}
 	return nil
@@ -39,7 +39,7 @@ func (cr *CategoryRepository) Browse() ([]model.Category, error) {
 	`
 	rows, err := cr.DB.Queryx(sqlStatement)
 	if err != nil {
-		log.Print(fmt.Errorf("error CategoryRepository - Browse : %w", err))
+		log.Error(fmt.Errorf("error CategoryRepository - Browse : %w", err))
 		return categories, err
 	}
 
@@ -60,7 +60,7 @@ func (cr *CategoryRepository) GetByID(id string) (model.Category, error) {
 	`
 	err := cr.DB.QueryRowx(sqlStatement, id).StructScan(&category)
 	if err != nil {
-		log.Print(fmt.Errorf("error CategoryRepository - GetByID : %w", err))
+		log.Error(fmt.Errorf("error CategoryRepository - GetByID : %w", err))
 		return category, err
 	}
 
@@ -76,7 +76,7 @@ func (cr *CategoryRepository) Update(id string, category model.Category) error {
 	`
 	_, err := cr.DB.Exec(sqlStatement, id, category.Name, category.Description)
 	if err != nil {
-		log.Print(fmt.Errorf("error CategoryRepository - Update : %w", err))
+		log.Error(fmt.Errorf("error CategoryRepository - Update : %w", err))
 		return err
 	}
 	return nil
@@ -91,7 +91,7 @@ func (cr *CategoryRepository) Delete(id string) (model.Category, error) {
 
 	_, err := cr.DB.Exec(sqlStatement, id)
 	if err != nil {
-		log.Print(fmt.Errorf("error CategoryRepository - Delete : %w", err))
+		log.Error(fmt.Errorf("error CategoryRepository - Delete : %w", err))
 		return category, err
 	}
 	return category, nil

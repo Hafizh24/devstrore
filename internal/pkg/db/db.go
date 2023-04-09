@@ -1,26 +1,25 @@
 package db
 
 import (
-	"log"
+	// "log"
 
 	"github.com/jmoiron/sqlx"
+	log "github.com/sirupsen/logrus"
 )
-
-
 
 func ConnectDB(DBDriver string, DBConn string) (*sqlx.DB, error) {
 
-	db,err := sqlx.Connect(DBDriver, DBConn)
+	db, err := sqlx.Connect(DBDriver, DBConn)
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 
 	err = db.Ping()
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 
-	log.Print("Database connection established.")
+	log.Info("Database connection established.")
 
 	return db, nil
 }

@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -11,8 +10,10 @@ import (
 	"github.com/hafizh24/devstore/internal/app/service"
 	"github.com/hafizh24/devstore/internal/pkg/config"
 	"github.com/hafizh24/devstore/internal/pkg/db"
+	"github.com/hafizh24/devstore/internal/pkg/middleware"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
+	log "github.com/sirupsen/logrus"
 )
 
 var cfg config.Config
@@ -32,6 +33,15 @@ func init() {
 	}
 	DBConn = db
 
+	// Setup logrus
+	logLevel, err := log.ParseLevel("debug")
+	if err != nil {
+		logLevel = log.InfoLevel
+	}
+
+	log.SetLevel(logLevel)                 // appyly log level
+	log.SetFormatter(&log.JSONFormatter{}) // define format using json
+
 }
 
 func main() {
@@ -40,7 +50,13 @@ func main() {
 	fmt.Println(cfg.DBConnection)
 	fmt.Println(cfg.DBDriver)
 
-	r := gin.Default()
+	r := gin.New()
+
+	// implement middleware
+	r.Use(
+		middleware.LoggingMiddleware(),
+		middleware.RecoveryMiddleware(),
+	)
 	r.GET("/ping", func(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, gin.H{"message": "pong"})
 	})
@@ -52,10 +68,7 @@ func main() {
 	r.POST("/categories", categoryController.CreateCategory)
 	r.GET("/categories", categoryController.BrowseCategory)
 	r.GET("/categories/:id", categoryController.DetailCategory)
-
-	// r.PUT("/categories/:id", categoryController.UpdateCategory)
 	r.PATCH("/categories/:id", categoryController.UpdateCategory)
-
 	r.DELETE("/categories/:id", categoryController.DeleteCategory)
 
 	appPort := fmt.Sprintf(":%s", cfg.ServerPort)
