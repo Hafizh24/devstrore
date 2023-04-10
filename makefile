@@ -9,9 +9,9 @@ help: ## You are here! showing all command documenentation.
 DOCKER_COMPOSE_FILE ?= docker-compose.yaml
 
 
-#========================#
-#== DATABASE MIGRATION ==#
-#========================#
+#===========#
+#== TOOLS ==#
+#===========#
 
 migrate-up: ## Run migrations UP
 	docker compose -f ${DOCKER_COMPOSE_FILE} --profile tools run --rm migrate up
@@ -25,8 +25,17 @@ migrate-down-all: ## Rollback migrations, all migrations
 migrate-create: ## Create a DB migration files e.g `make migrate-create name=migration-name`
 	docker compose -f ${DOCKER_COMPOSE_FILE} --profile tools run --rm migrate create -ext sql -dir /migrations -seq $(name)
 
+lint: ## Running golangci-lint for code analysis.
+lint:
+	docker compose -f ${DOCKER_COMPOSE_FILE} --profile tools run --rm lint golangci-lint run -v
+
 shell-db: ## Enter to database console
 	docker compose -f ${DOCKER_COMPOSE_FILE} exec db psql -U postgres -d postgres
+
+#=======================#
+#== SETUP ENVIRONMENT ==#
+#=======================#
+
 
 environment: ## Setup environment.
 environment:
@@ -35,3 +44,4 @@ environment:
 server: ## Running Application
 server:
 	go run cmd/main.go
+
