@@ -66,11 +66,22 @@ func main() {
 	categoryService := service.NewCategoryService(categoryRepository)
 	categoryController := controller.NewCategoryController(categoryService)
 
+	productRepository := repository.NewProductRepository(DBConn)
+	productService := service.NewProductService(productRepository)
+	productController := controller.NewProductController(productService)
+
 	r.POST("/categories", categoryController.CreateCategory)
 	r.GET("/categories", categoryController.BrowseCategory)
 	r.GET("/categories/:id", categoryController.DetailCategory)
 	r.PATCH("/categories/:id", categoryController.UpdateCategory)
 	r.DELETE("/categories/:id", categoryController.DeleteCategory)
+
+	// product entrypoint
+	r.GET("/products", productController.BrowseProduct)
+	r.GET("/products/:id", productController.DetailProduct)
+	r.POST("/products", productController.CreateProduct)
+	r.PATCH("/products/:id", productController.UpdateProduct)
+	r.DELETE("/products/:id", productController.DeleteProduct)
 
 	appPort := fmt.Sprintf(":%s", cfg.ServerPort)
 	// nolint:errcheck

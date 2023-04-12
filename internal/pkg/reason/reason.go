@@ -10,3 +10,12 @@ var (
 	InternalServerError     = "internal server error"
 	RequestFormError        = "request format is not valid"
 )
+
+var (
+	ProductNotFound        = "Product not found"
+	ProductCannotCreate    = "cannot Create Product"
+	ProductCannotBrowse    = "cannot Browse Product"
+	ProductCannotUpdate    = "cannot Update Product"
+	ProductCannotDelete    = "cannot Delete Product"
+	ProductCannotGetDetail = "cannot get detail"
+)

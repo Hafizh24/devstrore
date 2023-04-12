@@ -9,3 +9,11 @@ type ICategoryRepository interface {
 	Update(id string, category model.Category) error
 	Delete(id string) (model.Category, error)
 }
+
+type IProductRepository interface {
+	Browse() ([]model.Product, error)
+	GetByID(id string) (model.Product, error)
+	Create(product model.Product) error
+	Delete(id string) (model.Product, error)
+	Update(id string, product model.Product) error
+}
