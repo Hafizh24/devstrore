@@ -8,7 +8,6 @@ import (
 	"github.com/hafizh24/devstore/internal/app/schema"
 	"github.com/hafizh24/devstore/internal/app/service"
 	"github.com/hafizh24/devstore/internal/pkg/handler"
-	"github.com/hafizh24/devstore/internal/pkg/reason"
 )
 
 type CategoryController struct {
@@ -77,11 +76,7 @@ func (cc *CategoryController) DeleteCategory(ctx *gin.Context) {
 	id, _ := ctx.Params.Get("id")
 
 	_, err := cc.service.DeleteByID(id)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			handler.ResponseError(ctx, http.StatusNotFound, reason.CategoryNotFound)
-			return
-		}
+	if err != nil && err != sql.ErrNoRows {
 		handler.ResponseError(ctx, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
