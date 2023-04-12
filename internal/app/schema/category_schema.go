@@ -7,12 +7,11 @@ type GetCategoryResp struct {
 }
 
 type CreateCategoryReq struct {
-	Name        string `json:"name"`
-	Description string `json:"description"`
+	Name        string `validate:"required" json:"name"`
+	Description string `validate:"required" json:"description"`
 }
 
 type UpdateCategoryReq struct {
-	ID          int    `json:"id"`
-	Name        string `json:"name" binding:"required"`
-	Description string `json:"description" binding:"required"`
+	Name        string `json:"name" validate:"required"`
+	Description string `json:"description" validate:"required"`
 }

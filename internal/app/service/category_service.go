@@ -1,11 +1,13 @@
 package service
 
 import (
+	"database/sql"
 	"errors"
 
 	"github.com/hafizh24/devstore/internal/app/model"
 	"github.com/hafizh24/devstore/internal/app/repository"
 	"github.com/hafizh24/devstore/internal/app/schema"
+	"github.com/hafizh24/devstore/internal/pkg/reason"
 )
 
 type CategoryService struct {
@@ -16,7 +18,7 @@ func NewCategoryService(repo repository.ICategoryRepository) *CategoryService {
 	return &CategoryService{repo: repo}
 }
 
-func (cs *CategoryService) Create(req schema.CreateCategoryReq) error {
+func (cs *CategoryService) Create(req *schema.CreateCategoryReq) error {
 	var insertData model.Category
 
 	insertData.Name = req.Name
@@ -24,7 +26,7 @@ func (cs *CategoryService) Create(req schema.CreateCategoryReq) error {
 
 	err := cs.repo.Create(insertData)
 	if err != nil {
-		return errors.New("cannot create category")
+		return errors.New(reason.CategoryCannotCreate)
 	}
 	return nil
 }
@@ -34,7 +36,7 @@ func (cs *CategoryService) BrowseAll() ([]schema.GetCategoryResp, error) {
 
 	categories, err := cs.repo.Browse()
 	if err != nil {
-		return nil, errors.New("cannot get categories")
+		return nil, errors.New(reason.CategoryCannotBrowse)
 	}
 
 	for _, value := range categories {
@@ -53,7 +55,7 @@ func (cs *CategoryService) GetByID(id string) (schema.GetCategoryResp, error) {
 
 	category, err := cs.repo.GetByID(id)
 	if err != nil {
-		return resp, errors.New("cannot get detail categories")
+		return resp, errors.New(reason.CategoryCannotGetDetail)
 	}
 
 	resp.ID = category.ID
@@ -63,7 +65,7 @@ func (cs *CategoryService) GetByID(id string) (schema.GetCategoryResp, error) {
 	return resp, nil
 }
 
-func (cs *CategoryService) UpdateByID(id string, req schema.UpdateCategoryReq) error {
+func (cs *CategoryService) UpdateByID(id string, req *schema.UpdateCategoryReq) error {
 	var updateData model.Category
 
 	updateData.Name = req.Name
@@ -71,7 +73,10 @@ func (cs *CategoryService) UpdateByID(id string, req schema.UpdateCategoryReq) e
 
 	err := cs.repo.Update(id, updateData)
 	if err != nil {
-		return errors.New("cannot update category")
+		if err == sql.ErrNoRows {
+			return errors.New(reason.CategoryNotFound)
+		}
+		return errors.New(reason.CategoryCannotUpdate)
 	}
 
 	return nil
@@ -83,7 +88,7 @@ func (cs *CategoryService) DeleteByID(id string) (schema.GetCategoryResp, error)
 
 	category, err := cs.repo.Delete(id)
 	if err != nil {
-		return req, errors.New("cannot delete category")
+		return req, errors.New(reason.CategoryCannotDelete)
 	}
 
 	req.ID = category.ID

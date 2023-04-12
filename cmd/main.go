@@ -10,6 +10,7 @@ import (
 	"github.com/hafizh24/devstore/internal/app/service"
 	"github.com/hafizh24/devstore/internal/pkg/config"
 	"github.com/hafizh24/devstore/internal/pkg/db"
+	"github.com/hafizh24/devstore/internal/pkg/handler"
 	"github.com/hafizh24/devstore/internal/pkg/middleware"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
@@ -58,7 +59,7 @@ func main() {
 		middleware.RecoveryMiddleware(),
 	)
 	r.GET("/ping", func(ctx *gin.Context) {
-		ctx.JSON(http.StatusOK, gin.H{"message": "pong"})
+		handler.ResponseSuccess(ctx, http.StatusOK, "pong", nil)
 	})
 	// ---------------------------------------------------------------------------------------
 	categoryRepository := repository.NewCategoryRepository(DBConn)
@@ -72,5 +73,6 @@ func main() {
 	r.DELETE("/categories/:id", categoryController.DeleteCategory)
 
 	appPort := fmt.Sprintf(":%s", cfg.ServerPort)
+	// nolint:errcheck
 	r.Run(appPort)
 }

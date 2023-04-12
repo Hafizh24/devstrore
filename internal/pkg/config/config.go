@@ -20,7 +20,7 @@ func LoadConfig(fileconfigpath string) (Config, error) {
 	if err != nil {
 		return config, err
 	}
-
+	// nolint:errcheck
 	viper.Unmarshal(&config)
 	return config, nil
 }
