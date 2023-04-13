@@ -14,7 +14,7 @@ jobs:
           go-version: 1.20
 
       - name: Get dependencies
-        run: go mod init github.com/hafizh24/devstore
+        run: go get -v -t -d ./...
 
       - name: Build
         run: go build -v ./...
