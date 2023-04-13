@@ -17,6 +17,8 @@ jobs:
 
       - name: Download Go modules
         run: go mod download
+        env:
+          GOROOT: /home/runner/work/devstrore/go
 
       - name: Test
         run: make test
