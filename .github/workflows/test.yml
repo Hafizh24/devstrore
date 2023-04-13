@@ -1,23 +1,19 @@
-name: Go package testing
+name: Go testing
 
 on: [push]
 
 jobs:
-  build:
+  test:
+    name: Test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
           go-version: 1.20
 
-      - name: Get dependencies
-        run: go get -u github.com/hafizh24/devstore
-
-      - name: Build
-        run: go build -v ./...
+      - name: Check out code
+        uses: actions/checkout@v3
 
       - name: Test
-        run: go test -v ./...
+        run: make test
