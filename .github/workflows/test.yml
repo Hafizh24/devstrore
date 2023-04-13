@@ -15,5 +15,10 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
 
+      - name: Get dependencies
+        run: go get -u github.com/jmoiron/sqlx
+        env:
+        GOPATH: /home/runner/work/devstore/go
+
       - name: Test
         run: make test
