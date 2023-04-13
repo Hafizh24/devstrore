@@ -1,7 +1,6 @@
 package service
 
 import (
-	"database/sql"
 	"errors"
 
 	"github.com/hafizh24/devstore/internal/app/model"
@@ -71,11 +70,12 @@ func (cs *CategoryService) UpdateByID(id string, req *schema.UpdateCategoryReq) 
 	updateData.Name = req.Name
 	updateData.Description = req.Description
 
+	if updateData.ID == 0 {
+		return errors.New(reason.CategoryNotFound)
+	}
+
 	err := cs.repo.Update(id, updateData)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return errors.New(reason.CategoryNotFound)
-		}
 		return errors.New(reason.CategoryCannotUpdate)
 	}
 
@@ -84,7 +84,6 @@ func (cs *CategoryService) UpdateByID(id string, req *schema.UpdateCategoryReq) 
 
 func (cs *CategoryService) DeleteByID(id string) (schema.GetCategoryResp, error) {
 	var req schema.GetCategoryResp
-	// var deleteData model.Category
 
 	category, err := cs.repo.Delete(id)
 	if err != nil {
@@ -94,6 +93,10 @@ func (cs *CategoryService) DeleteByID(id string) (schema.GetCategoryResp, error)
 	req.ID = category.ID
 	req.Name = category.Name
 	req.Description = category.Description
+
+	if req.ID == 0 {
+		return req, errors.New(reason.CategoryNotFound)
+	}
 
 	return req, nil
 }

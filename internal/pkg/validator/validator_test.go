@@ -30,6 +30,11 @@ func TestValidator_Check(t *testing.T) {
 			DataNotValid: true,
 			ReqBody:      `{"name": "foo"}`,
 		},
+		{
+			Name:         "when name and description presence",
+			DataNotValid: false,
+			ReqBody:      `{"name": "foo", "description": "foobar"}`,
+		},
 	}
 
 	for _, tc := range cases {

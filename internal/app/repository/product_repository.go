@@ -1,11 +1,9 @@
 package repository
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/hafizh24/devstore/internal/app/model"
-	"github.com/hafizh24/devstore/internal/pkg/reason"
 	"github.com/jmoiron/sqlx"
 	log "github.com/sirupsen/logrus"
 )
@@ -83,11 +81,6 @@ func (pr *ProductRepository) Delete(id string) (model.Product, error) {
 		return product, err
 	}
 
-	// check, _ := delete.RowsAffected()
-	// if check == 0 {
-	// 	return product, errors.New(reason.CategoryNotFound)
-	// }
-
 	return product, nil
 }
 
@@ -98,15 +91,10 @@ func (pr *ProductRepository) Update(id string, product model.Product) error {
 	SET name= $2, description= $3, currency= $4, price= $5, total_stock= $6, is_active= $7, category_id= $8
 	WHERE id = $1
 	`
-	update, err := pr.DB.Exec(sqlStatement, id, product.Name, product.Description, product.Currency, product.Price, product.TotalStock, product.IsActive, product.CategoryID)
+	_, err := pr.DB.Exec(sqlStatement, id, product.Name, product.Description, product.Currency, product.Price, product.TotalStock, product.IsActive, product.CategoryID)
 	if err != nil {
 		log.Error(fmt.Errorf("error ProductRepository - Update : %w", err))
 		return err
-	}
-
-	check, _ := update.RowsAffected()
-	if check == 0 {
-		return errors.New(reason.ProductNotFound)
 	}
 
 	return nil
