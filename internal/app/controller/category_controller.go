@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"database/sql"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -76,7 +75,7 @@ func (cc *CategoryController) DeleteCategory(ctx *gin.Context) {
 	id, _ := ctx.Params.Get("id")
 
 	_, err := cc.service.DeleteByID(id)
-	if err != nil && err != sql.ErrNoRows {
+	if err != nil {
 		handler.ResponseError(ctx, http.StatusUnprocessableEntity, err.Error())
 		return
 	}

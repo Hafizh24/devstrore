@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestReocveryMiddleware(t *testing.T) {
+func TestRecoveryMiddleware(t *testing.T) {
 	// TEST CASE
 	type TestCase struct {
 		Name            string

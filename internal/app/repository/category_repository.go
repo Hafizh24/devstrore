@@ -69,7 +69,7 @@ func (cr *CategoryRepository) GetByID(id string) (model.Category, error) {
 }
 
 func (cr *CategoryRepository) Update(id string, category model.Category) error {
-	// var category model.Category
+
 	var sqlStatement = `
 	UPDATE categories 
 	SET name= $2, description= $3

@@ -81,7 +81,6 @@ func (ps *ProductService) Create(req *schema.CreateProductReq) error {
 
 func (ps *ProductService) DeleteByID(id string) (schema.GetProductResp, error) {
 	var req schema.GetProductResp
-	// var deleteData model.Category
 
 	product, err := ps.repo.Delete(id)
 	if err != nil {
@@ -114,6 +113,10 @@ func (ps *ProductService) UpdateByID(id string, req *schema.UpdateProductReq) er
 	updateData.TotalStock = req.TotalStock
 	updateData.IsActive = req.IsActive
 	updateData.CategoryID = req.CategoryID
+
+	if updateData.ID == 0 {
+		return errors.New(reason.ProductNotFound)
+	}
 
 	err := ps.repo.Update(id, updateData)
 	if err != nil {
