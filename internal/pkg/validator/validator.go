@@ -10,9 +10,6 @@ func init() {
 
 func Check(value interface{}) bool {
 	err := validate.Struct(value)
-	if err != nil {
-		return true
-	}
 
-	return false
+	return err != nil
 }
