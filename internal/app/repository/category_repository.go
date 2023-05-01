@@ -95,6 +95,7 @@ func (cr *CategoryRepository) Delete(id string) (model.Category, error) {
 		log.Error(fmt.Errorf("error CategoryRepository - Delete : %w", err))
 		return category, err
 	}
+
 	return category, nil
 }
 

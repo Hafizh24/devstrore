@@ -35,7 +35,7 @@ func (pc *ProductController) DetailProduct(ctx *gin.Context) {
 		return
 	}
 
-	handler.ResponseSuccess(ctx, http.StatusOK, "", resp)
+	handler.ResponseSuccess(ctx, http.StatusOK, "success get detail product", resp)
 }
 
 func (pc *ProductController) CreateProduct(ctx *gin.Context) {

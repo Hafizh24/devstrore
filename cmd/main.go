@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/hafizh24/devstore/internal/app/controller"
 	"github.com/hafizh24/devstore/internal/app/repository"
@@ -57,18 +58,33 @@ func main() {
 	r.Use(
 		middleware.LoggingMiddleware(),
 		middleware.RecoveryMiddleware(),
+		cors.Default(),
 	)
-	r.GET("/ping", func(ctx *gin.Context) {
-		handler.ResponseSuccess(ctx, http.StatusOK, "pong", nil)
-	})
+
 	// ---------------------------------------------------------------------------------------
+	tokenMaker := service.NewTokenMaker(
+		cfg.AccessTokenKey,
+		cfg.RefreshTokenKey,
+		cfg.AccessTokenDuration,
+		cfg.RefreshTokenDuration,
+	)
+
 	categoryRepository := repository.NewCategoryRepository(DBConn)
 	categoryService := service.NewCategoryService(categoryRepository)
 	categoryController := controller.NewCategoryController(categoryService)
 
 	productRepository := repository.NewProductRepository(DBConn)
-	productService := service.NewProductService(productRepository)
+	productService := service.NewProductService(productRepository, categoryRepository)
 	productController := controller.NewProductController(productService)
+
+	registrationRepository := repository.NewUserRepository(DBConn)
+	registrationService := service.NewRegistrationService(registrationRepository)
+	registrationController := controller.NewRegistrationController(registrationService)
+
+	userRepository := repository.NewUserRepository(DBConn)
+	authRepository := repository.NewAuthRepository(DBConn)
+	sessionService := service.NewSessionService(userRepository, authRepository, tokenMaker)
+	sessionController := controller.NewSessionController(sessionService, tokenMaker)
 
 	r.POST("/categories", categoryController.CreateCategory)
 	r.GET("/categories", categoryController.BrowseCategory)
@@ -82,6 +98,19 @@ func main() {
 	r.POST("/products", productController.CreateProduct)
 	r.PATCH("/products/:id", productController.UpdateProduct)
 	r.DELETE("/products/:id", productController.DeleteProduct)
+
+	r.POST("/auth/register", registrationController.Register)
+
+	r.POST("/auth/login", sessionController.Login)
+	r.GET("/auth/refresh", sessionController.Refresh)
+
+	secured := r.Group("/secured").Use(middleware.AuthMiddleware(tokenMaker))
+	{
+		secured.GET("/auth/logout", sessionController.Logout)
+		secured.GET("/ping", func(ctx *gin.Context) {
+			handler.ResponseSuccess(ctx, http.StatusOK, "pong", nil)
+		})
+	}
 
 	appPort := fmt.Sprintf(":%s", cfg.ServerPort)
 	// nolint:errcheck

@@ -29,3 +29,20 @@ type UpdateProductReq struct {
 	IsActive    bool   `validate:"required" json:"is_active"`
 	CategoryID  int    `validate:"required" json:"category_id"`
 }
+
+type GetDetailResp struct {
+	ID          int      `json:"id"`
+	Name        string   `json:"name"`
+	Description string   `json:"description"`
+	Currency    string   `json:"currency"`
+	Price       int      `json:"price"`
+	TotalStock  int      `json:"total_stock"`
+	IsActive    bool     `json:"is_active"`
+	Category    Category `json:"category"`
+}
+
+type Category struct {
+	ID          int    `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+}

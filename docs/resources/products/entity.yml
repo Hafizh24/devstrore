@@ -1,0 +1,113 @@
+schemas:
+  ResponseProduct200:
+    type: object
+    properties:
+      status:
+        type: string
+      message:
+        type: string
+      data:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+            description:
+              type: string
+            currency:
+              type: string
+            price:
+              type: integer
+            total_stock:
+              type: integer
+            is_active:
+              type: boolean
+            category_id:
+              type: integer
+
+  ResponseDetail200:
+    type: object
+    properties:
+      status:
+        type: string
+      message:
+        type: string
+      data:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+            description:
+              type: string
+            currency:
+              type: string
+            price:
+              type: integer
+            total_stock:
+              type: integer
+            is_active:
+              type: boolean
+            category_id:
+              type: integer
+
+  ResponseProduct422:
+    type: object
+    properties:
+      status:
+        type: string
+      message:
+        type: string
+      data:
+        type: array
+
+  ResponseCreate201:
+    type: object
+    properties:
+      status:
+        type: string
+      message:
+        type: string
+      data:
+        type: array
+        items:
+          type: object
+          properties:
+            name:
+              type: string
+            description:
+              type: string
+            currency:
+              type: string
+            price:
+              type: integer
+            total_stock:
+              type: integer
+            is_active:
+              type: boolean
+            category_id:
+              type: integer
+
+  RequestCreateProduct:
+    type: object
+    properties:
+      name:
+        type: string
+      description:
+        type: string
+      currency:
+        type: string
+      price:
+        type: integer
+      total_stock:
+        type: integer
+      is_active:
+        type: boolean
+      category_id:
+        type: integer

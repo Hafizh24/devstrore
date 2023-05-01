@@ -24,7 +24,7 @@ func (cc *CategoryController) BrowseCategory(ctx *gin.Context) {
 		return
 	}
 
-	handler.ResponseSuccess(ctx, http.StatusOK, "", resp)
+	handler.ResponseSuccess(ctx, http.StatusOK, "success get list category", resp)
 }
 
 func (cc *CategoryController) CreateCategory(ctx *gin.Context) {
@@ -51,7 +51,7 @@ func (cc *CategoryController) DetailCategory(ctx *gin.Context) {
 		return
 	}
 
-	handler.ResponseSuccess(ctx, http.StatusOK, "", resp)
+	handler.ResponseSuccess(ctx, http.StatusOK, "success get detail category", resp)
 }
 
 func (cc *CategoryController) UpdateCategory(ctx *gin.Context) {
