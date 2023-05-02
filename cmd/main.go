@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"net/http"
 
 	"github.com/casbin/casbin/v2"
 	"github.com/gin-contrib/cors"
@@ -12,7 +11,6 @@ import (
 	"github.com/hafizh24/devstore/internal/app/service"
 	"github.com/hafizh24/devstore/internal/pkg/config"
 	"github.com/hafizh24/devstore/internal/pkg/db"
-	"github.com/hafizh24/devstore/internal/pkg/handler"
 	"github.com/hafizh24/devstore/internal/pkg/middleware"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
@@ -93,17 +91,18 @@ func main() {
 	sessionService := service.NewSessionService(userRepository, authRepository, tokenMaker)
 	sessionController := controller.NewSessionController(sessionService, tokenMaker)
 
-	r.POST("/auth/register", registrationController.Register)
+	// Entrypoint
 
-	r.POST("/auth/login", sessionController.Login)
-	r.GET("/auth/refresh", sessionController.Refresh)
+	route := r.Group("/auth")
+	{
+		route.POST("/register", registrationController.Register)
+		route.POST("/login", sessionController.Login)
+		route.GET("/refresh", sessionController.Refresh)
+	}
 
 	secured := r.Group("/api").Use(middleware.AuthMiddleware(tokenMaker))
 	{
 		secured.GET("/auth/logout", sessionController.Logout)
-		secured.GET("/ping", func(ctx *gin.Context) {
-			handler.ResponseSuccess(ctx, http.StatusOK, "pong", nil)
-		})
 
 		secured.GET("/categories", middleware.AuthorizationMiddleware("categories", "read", enforcer), categoryController.BrowseCategory)
 		secured.GET("/categories/:id", middleware.AuthorizationMiddleware("categories", "read", enforcer), categoryController.DetailCategory)

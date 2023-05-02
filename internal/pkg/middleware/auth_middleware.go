@@ -15,12 +15,15 @@ type AccessTokenVerifier interface {
 
 func AuthMiddleware(tokenMaker AccessTokenVerifier) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		tokenString := ctx.GetHeader("Authorization")
-		if tokenString == "" {
+		const BearerSchema = "Bearer "
+		authHeader := ctx.GetHeader("Authorization")
+		if authHeader == "" {
 			handler.ResponseError(ctx, http.StatusUnauthorized, reason.ErrNoToken)
 			ctx.Abort()
 			return
 		}
+		tokenString := authHeader[len(BearerSchema):]
+
 		sub, err := tokenMaker.ValidateAccessToken(tokenString)
 		if err != nil {
 			handler.ResponseError(ctx, http.StatusUnauthorized, err.Error())
