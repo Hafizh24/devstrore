@@ -26,5 +26,5 @@ type IUserRepository interface {
 type IAuthRepository interface {
 	Create(auth model.Auth) error
 	Find(userID int, RefreshToken string) (model.Auth, error)
-	Delete(userID int) (model.Auth, error)
+	Delete(userID int) error
 }

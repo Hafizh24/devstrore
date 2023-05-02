@@ -45,8 +45,8 @@ func (ar *AuthRepository) Find(userID int, RefreshToken string) (model.Auth, err
 
 	return auth, nil
 }
-func (ar *AuthRepository) Delete(userID int) (model.Auth, error) {
-	var auth model.Auth
+func (ar *AuthRepository) Delete(userID int) error {
+
 	var sqlStatement = `
 	DELETE FROM auths
 	WHERE user_id = $1
@@ -55,8 +55,8 @@ func (ar *AuthRepository) Delete(userID int) (model.Auth, error) {
 	_, err := ar.DB.Exec(sqlStatement, userID)
 	if err != nil {
 		log.Error(fmt.Errorf("error AuthRepository - Delete : %w", err))
-		return auth, err
+		return err
 	}
 
-	return auth, nil
+	return nil
 }

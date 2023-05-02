@@ -71,10 +71,7 @@ func (ss *SessionService) Login(req *schema.LoginReq) (schema.LoginResp, error) 
 func (ss *SessionService) VerifyPassword(hashedPassword, password string) bool {
 
 	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
-	if err != nil {
-		return false
-	}
-	return true
+	return err == nil
 }
 
 func (ss *SessionService) SaveToken(data model.Auth) error {
@@ -111,7 +108,7 @@ func (ss *SessionService) RefreshToken(req *schema.RefreshTokenReq) (schema.Refr
 
 func (ss *SessionService) Logout(req *schema.LogoutReq) error {
 
-	_, err := ss.authRepo.Delete(req.UserID)
+	err := ss.authRepo.Delete(req.UserID)
 
 	if err != nil {
 		log.Error(fmt.Errorf("error LoginService - Delete Session : %w", err))
