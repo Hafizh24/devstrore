@@ -24,7 +24,7 @@ func (cc *CategoryController) BrowseCategory(ctx *gin.Context) {
 		return
 	}
 
-	handler.ResponseSuccess(ctx, http.StatusOK, "", resp)
+	handler.ResponseSuccess(ctx, http.StatusOK, "success get list category", resp)
 }
 
 func (cc *CategoryController) CreateCategory(ctx *gin.Context) {
@@ -51,7 +51,7 @@ func (cc *CategoryController) DetailCategory(ctx *gin.Context) {
 		return
 	}
 
-	handler.ResponseSuccess(ctx, http.StatusOK, "", resp)
+	handler.ResponseSuccess(ctx, http.StatusOK, "success get detail category", resp)
 }
 
 func (cc *CategoryController) UpdateCategory(ctx *gin.Context) {
@@ -82,44 +82,3 @@ func (cc *CategoryController) DeleteCategory(ctx *gin.Context) {
 
 	handler.ResponseSuccess(ctx, http.StatusOK, "success deleted category", nil)
 }
-
-/*
-func (cc *CategoryController) Update(ctx *gin.Context) {
-	var payload *schema.UpdateCategoryReq
-	postID, _ := ctx.Params.Get("id")
-	request, err := cc.service.Updates(postID)
-	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"message": err.Error()})
-	}
-
-	err = ctx.ShouldBindJSON(&request)
-	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"message": err.Error()})
-	}
-
-	ctx.JSON(http.StatusOK, gin.H{"service": request, "status": "success", "bind": "kosong", "payload": "kosong"})
-
-	return
-}
-
-func (cc *CategoryController) Updates(ctx *gin.Context) {
-	postID, _ := ctx.Params.Get("id")
-	var req schema.UpdateCategoryReq
-	post, err := cc.service.Updates(postID, &req)
-	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"message": err.Error()})
-	}
-
-	if err := ctx.ShouldBindJSON(&post); err != nil {
-		handler.ResponseError(ctx, http.StatusUnprocessableEntity, err.Error())
-		return
-	}
-	post := cc.service.CUpdate(resp)
-	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"message": err.Error()})
-	}
-
-	ctx.JSON(http.StatusOK, gin.H{"ser": &post, "service": post, "status": "success", "post": &req, "bind": postID, "payload": req})
-
-}
-*/

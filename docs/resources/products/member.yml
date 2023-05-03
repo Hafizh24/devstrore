@@ -1,0 +1,139 @@
+get:
+  description: Detail product data
+  summary: To get detail product data
+  parameters:
+    - in: path
+      name: id
+      description: The product ID
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+      example: 1
+  tags:
+    - Product
+  responses:
+    200:
+      description: Success get detail product
+      content:
+        application/json:
+          schema:
+            $ref: "entity.yml#/schemas/ResponseDetail200"
+          example:
+            status: success
+            message: success get detail product
+            data:
+              id: 1
+              name: "my product"
+              description: "description for my product"
+              currency: "rupiah"
+              price: 5000
+              total_stock: 3
+              is_active: true
+              category_id: 1
+
+    422:
+      description: cannot get detail product
+      content:
+        application/json:
+          schema:
+            $ref: "entity.yml#/schemas/ResponseProduct422"
+          example:
+            status: error
+            message: cannot get detail
+            data:
+patch:
+  description: Update product data
+  summary: To update product data
+  parameters:
+    - in: path
+      name: id
+      description: The Product ID
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+      example: 1
+  tags:
+    - Product
+
+  requestBody:
+    description: update product data
+    content:
+      application/json:
+        schema:
+          $ref: "entity.yml#/schemas/RequestCreateProduct"
+        examples:
+          Novel:
+            value:
+              name: "novel"
+              description: "buku fiksi"
+              currency: "rupiah"
+              price: 5000
+              total_stock: 3
+              is_active: true
+              category_id: 1
+          motor:
+            value:
+              description: "kendaraan roda 4"
+    required: true
+
+  responses:
+    200:
+      description: Success update product data
+      content:
+        application/json:
+          schema:
+            $ref: "entity.yml#/schemas/ResponseProduct200"
+          example:
+            status: success
+            message: success update product
+            data:
+
+    422:
+      description: cannot delete product data
+      content:
+        application/json:
+          schema:
+            $ref: "entity.yml#/schemas/ResponseProduct422"
+          example:
+            status: error
+            message: cannot update product
+            data:
+
+delete:
+  description: Delete Product data
+  summary: To delete Product data
+  parameters:
+    - in: path
+      name: id
+      description: The Product ID
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+      example: 1
+  tags:
+    - Product
+  responses:
+    200:
+      description: Success delete product data
+      content:
+        application/json:
+          schema:
+            $ref: "entity.yml#/schemas/ResponseProduct200"
+          example:
+            status: success
+            message: success delete product
+            data:
+
+    422:
+      description: cannot delete product data
+      content:
+        application/json:
+          schema:
+            $ref: "entity.yml#/schemas/ResponseProduct422"
+          example:
+            status: error
+            message: cannot delete product
+            data:

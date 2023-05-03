@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"strconv"
 
 	"github.com/hafizh24/devstore/internal/app/model"
 	"github.com/hafizh24/devstore/internal/app/repository"
@@ -10,17 +11,18 @@ import (
 )
 
 type ProductService struct {
-	repo repository.IProductRepository
+	productRepo  repository.IProductRepository
+	categoryRepo CategoryRepository
 }
 
-func NewProductService(repo repository.IProductRepository) *ProductService {
-	return &ProductService{repo: repo}
+func NewProductService(productRepo repository.IProductRepository, categoryRepo CategoryRepository) *ProductService {
+	return &ProductService{productRepo: productRepo, categoryRepo: categoryRepo}
 }
 
 func (ps *ProductService) BrowseAll() ([]schema.GetProductResp, error) {
 	var resp []schema.GetProductResp
 
-	products, err := ps.repo.Browse()
+	products, err := ps.productRepo.Browse()
 	if err != nil {
 		return nil, errors.New(reason.ProductCannotBrowse)
 	}
@@ -41,12 +43,17 @@ func (ps *ProductService) BrowseAll() ([]schema.GetProductResp, error) {
 	return resp, nil
 }
 
-func (ps *ProductService) GetByID(id string) (schema.GetProductResp, error) {
-	var resp schema.GetProductResp
+func (ps *ProductService) GetByID(id string) (schema.GetDetailResp, error) {
+	var resp schema.GetDetailResp
 
-	product, err := ps.repo.GetByID(id)
+	product, err := ps.productRepo.GetByID(id)
 	if err != nil {
 		return resp, errors.New(reason.ProductCannotGetDetail)
+	}
+	categoryID := strconv.Itoa(product.CategoryID)
+	category, err := ps.categoryRepo.GetByID(categoryID)
+	if err != nil {
+		return resp, errors.New(reason.CategoryCannotGetDetail)
 	}
 
 	resp.ID = product.ID
@@ -56,7 +63,11 @@ func (ps *ProductService) GetByID(id string) (schema.GetProductResp, error) {
 	resp.Price = product.Price
 	resp.TotalStock = product.TotalStock
 	resp.IsActive = product.IsActive
-	resp.CategoryID = product.CategoryID
+	resp.Category = schema.Category{
+		ID:          category.ID,
+		Name:        category.Name,
+		Description: category.Description,
+	}
 
 	return resp, nil
 }
@@ -72,7 +83,7 @@ func (ps *ProductService) Create(req *schema.CreateProductReq) error {
 	insertData.IsActive = req.IsActive
 	insertData.CategoryID = req.CategoryID
 
-	err := ps.repo.Create(insertData)
+	err := ps.productRepo.Create(insertData)
 	if err != nil {
 		return errors.New(reason.ProductCannotCreate)
 	}
@@ -82,7 +93,12 @@ func (ps *ProductService) Create(req *schema.CreateProductReq) error {
 func (ps *ProductService) DeleteByID(id string) (schema.GetProductResp, error) {
 	var req schema.GetProductResp
 
-	product, err := ps.repo.Delete(id)
+	check, _ := ps.productRepo.GetByID(id)
+	if check.ID == 0 {
+		return req, errors.New(reason.ProductNotFound)
+	}
+
+	product, err := ps.productRepo.Delete(id)
 	if err != nil {
 		return req, errors.New(reason.ProductCannotDelete)
 	}
@@ -95,10 +111,6 @@ func (ps *ProductService) DeleteByID(id string) (schema.GetProductResp, error) {
 	req.TotalStock = product.TotalStock
 	req.IsActive = product.IsActive
 	req.CategoryID = product.CategoryID
-
-	if req.ID == 0 {
-		return req, errors.New(reason.ProductNotFound)
-	}
 
 	return req, nil
 }
@@ -114,11 +126,12 @@ func (ps *ProductService) UpdateByID(id string, req *schema.UpdateProductReq) er
 	updateData.IsActive = req.IsActive
 	updateData.CategoryID = req.CategoryID
 
-	if updateData.ID == 0 {
+	check, _ := ps.productRepo.GetByID(id)
+	if check.ID == 0 {
 		return errors.New(reason.ProductNotFound)
 	}
 
-	err := ps.repo.Update(id, updateData)
+	err := ps.productRepo.Update(id, updateData)
 	if err != nil {
 		return errors.New(reason.ProductCannotUpdate)
 	}

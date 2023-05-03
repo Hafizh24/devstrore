@@ -95,36 +95,6 @@ func (cr *CategoryRepository) Delete(id string) (model.Category, error) {
 		log.Error(fmt.Errorf("error CategoryRepository - Delete : %w", err))
 		return category, err
 	}
-	return category, nil
-}
 
-/*
-func (cr *CategoryRepository) UpdatebyID(id string) (model.Category, error) {
-	var category model.Category
-	var sqlStatement = `
-		UPDATE categories
-		set name= $2, description= $3
-		WHERE id = $1
-		`
-	_, err := cr.DB.Exec(sqlStatement, id, category.Name, category.Description)
-	if err != nil {
-		log.Print(fmt.Errorf("error CategoryRepository - UpdateByID : %w", err))
-		return category, err
-	}
 	return category, nil
 }
-func (cr *CategoryRepository) CUpdate(category model.Category) error {
-	// var category model.Category
-	var sqlStatement = `
-	UPDATE categories
-	SET name= $2, description= $3
-	WHERE id = $1
-	`
-	_, err := cr.DB.Exec(sqlStatement, category.ID, category.Name, category.Description)
-	if err != nil {
-		log.Print(fmt.Errorf("error CategoryRepository - Update : %w", err))
-		return err
-	}
-	return nil
-}
-*/

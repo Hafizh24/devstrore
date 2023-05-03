@@ -1,0 +1,49 @@
+get:
+  description: List category data
+  summary: To get list category data
+  tags:
+    - Category
+  responses:
+    200:
+      description: Success get list category
+      content:
+        application/json:
+          schema:
+            $ref: "entity.yml#/schemas/ResponseListCategory"
+
+post:
+  description: create category data
+  summary: To create category data
+  tags:
+    - Category
+
+  requestBody:
+    description: create a new category data
+    content:
+      application/json:
+        schema:
+          $ref: "entity.yml#/schemas/RequestCreateCategory"
+        examples:
+          Buku:
+            value:
+              name: "buku"
+              description: "buku baru dan bekas"
+          otomotif:
+            value:
+              description: "kendaraan"
+    required: true
+
+  responses:
+    201:
+      description: Success create category data
+      content:
+        application/json:
+          schema:
+            $ref: "entity.yml#/schemas/ResponseCreate201"
+
+    422:
+      description: format is not valid
+      content:
+        application/json:
+          schema:
+            $ref: "entity.yml#/schemas/ResponseCreate422"

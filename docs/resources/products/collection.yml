@@ -1,0 +1,91 @@
+get:
+  description: List product data
+  summary: To get list product data
+  tags:
+    - Product
+  responses:
+    200:
+      description: Success get list product
+      content:
+        application/json:
+          schema:
+            $ref: "entity.yml#/schemas/ResponseProduct200"
+          example:
+            status: success
+            message: success get list product
+            data:
+              id: 1
+              name: "my product"
+              description: "description for my product"
+              currency: "rupiah"
+              price: 5000
+              total_stock: 3
+              is_active: true
+              category_id: 1
+
+    422:
+      description: Cannot get list product
+      content:
+        application/json:
+          schema:
+            $ref: "entity.yml#/schemas/ResponseProduct422"
+          example:
+            status: error
+            message: Cannot Browse Product
+            data:
+post:
+  description: create product data
+  summary: To create product data
+  tags:
+    - Product
+
+  requestBody:
+    description: create a new product data
+    content:
+      application/json:
+        schema:
+          $ref: "entity.yml#/schemas/RequestCreateProduct"
+        examples:
+          Novel:
+            value:
+              name: "novel"
+              description: "buku fiksi"
+              currency: "rupiah"
+              price: 5000
+              total_stock: 3
+              is_active: true
+              category_id: 1
+          motor:
+            value:
+              description: "kendaraan roda 4"
+    required: true
+
+  responses:
+    201:
+      description: Success create category data
+      content:
+        application/json:
+          schema:
+            $ref: "entity.yml#/schemas/ResponseCreate201"
+          example:
+            status: success
+            message: success create product
+            data:
+              name: "my product"
+              description: "description for my product"
+              currency: "rupiah"
+              price: 5000
+              total_stock: 3
+              is_active: true
+              category_id: 1
+
+    422:
+      description: format is not valid
+      content:
+        application/json:
+          schema:
+            $ref: "entity.yml#/schemas/ResponseProduct422"
+          example:
+            status: error
+            message: request format is not valid
+            data:

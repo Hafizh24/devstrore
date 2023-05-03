@@ -4,16 +4,15 @@ import (
 	"errors"
 
 	"github.com/hafizh24/devstore/internal/app/model"
-	"github.com/hafizh24/devstore/internal/app/repository"
 	"github.com/hafizh24/devstore/internal/app/schema"
 	"github.com/hafizh24/devstore/internal/pkg/reason"
 )
 
 type CategoryService struct {
-	repo repository.ICategoryRepository
+	repo CategoryRepository
 }
 
-func NewCategoryService(repo repository.ICategoryRepository) *CategoryService {
+func NewCategoryService(repo CategoryRepository) *CategoryService {
 	return &CategoryService{repo: repo}
 }
 
@@ -70,11 +69,12 @@ func (cs *CategoryService) UpdateByID(id string, req *schema.UpdateCategoryReq) 
 	updateData.Name = req.Name
 	updateData.Description = req.Description
 
-	if updateData.ID == 0 {
+	check, err := cs.repo.GetByID(id)
+	if check.ID == 0 {
 		return errors.New(reason.CategoryNotFound)
 	}
 
-	err := cs.repo.Update(id, updateData)
+	err = cs.repo.Update(id, updateData)
 	if err != nil {
 		return errors.New(reason.CategoryCannotUpdate)
 	}
@@ -82,66 +82,22 @@ func (cs *CategoryService) UpdateByID(id string, req *schema.UpdateCategoryReq) 
 	return nil
 }
 
-func (cs *CategoryService) DeleteByID(id string) (schema.GetCategoryResp, error) {
-	var req schema.GetCategoryResp
+func (cs *CategoryService) DeleteByID(id string) (*schema.GetCategoryResp, error) {
+	resp := &schema.GetCategoryResp{}
+
+	check, err := cs.repo.GetByID(id)
+	if check.ID == 0 {
+		return nil, errors.New(reason.CategoryNotFound)
+	}
 
 	category, err := cs.repo.Delete(id)
 	if err != nil {
-		return req, errors.New(reason.CategoryCannotDelete)
+		return resp, errors.New(reason.CategoryCannotDelete)
 	}
 
-	req.ID = category.ID
-	req.Name = category.Name
-	req.Description = category.Description
+	resp.ID = category.ID
+	resp.Name = category.Name
+	resp.Description = category.Description
 
-	if req.ID == 0 {
-		return req, errors.New(reason.CategoryNotFound)
-	}
-
-	return req, nil
+	return resp, nil
 }
-
-/*
-func (cs *CategoryService) UpdateID(id string, req schema.UpdateCategoryReq) error {
-	// var req schema.UpdateCategoryReq
-
-	category, err := cs.repo.UpdatebyID(id)
-	if err != nil {
-		return errors.New("cannot update category")
-	}
-
-	category.Name = req.Name
-	category.Description = req.Description
-
-	return nil
-}
-func (cs *CategoryService) Updates(id string, req *schema.UpdateCategoryReq) (model.Category, error) {
-	// var request schema.UpdateCategoryReq
-
-	category, err := cs.repo.UpdatebyID(id)
-	if err != nil {
-		return category, errors.New("cannot update category")
-	}
-
-	// req.Name = category.Name
-	// req.Description = category.Description
-	category.Name = req.Name
-	category.Description = req.Description
-
-	return category, nil
-}
-
-func (cs *CategoryService) CUpdate(resp schema.UpdateCategoryReq) error {
-	var insertData model.Category
-
-	insertData.Name = resp.Name
-	insertData.Description = resp.Description
-
-	err := cs.repo.CUpdate(insertData)
-	if err != nil {
-		return errors.New("cannot cupdate category")
-	}
-
-	return nil
-}
-*/
